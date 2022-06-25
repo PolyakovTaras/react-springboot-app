@@ -1,0 +1,62 @@
+---
+version: '3.5'
+services:
+  nginx:
+    container_name: supernginx
+    image: nginx:latest
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - 80:80
+    depends_on:
+      - frontend
+    networks:
+      - frontend
+  frontend:
+    container_name: frontend
+    image: frontend
+    build: ./frontend 
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - frontend
+      - backend
+  backend:
+    container_name: backend
+    image: backend
+    build: 
+      context: ./backend
+      target: development
+    restart: unless-stopped
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/fullstack
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - backend
+  database:
+    container_name: database
+    image: mysql:latest
+    restart: unless-stopped
+    cap_add:
+      - SYS_NICE
+    volumes:
+      - ./mysql_config:/etc/mysql/conf.d:rw
+      - ./mysql_data:/var/lib/mysql:rw
+    environment:
+      MYSQL_DATABASE: fullstack
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+    name: frontend
+  backend:
+    driver: bridge
+    name: backend
