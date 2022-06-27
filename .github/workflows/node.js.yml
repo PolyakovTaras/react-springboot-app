@@ -24,8 +24,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        working-directory:: /home/runner/work/react-springboot-app/react-springboot-app/frontend
-        persist-credentials: false
+        cache-dependency-path: /home/runner/work/react-springboot-app/react-springboot-app/frontend
     - name: Run npm ci
       run: npm ci
       working-directory: /home/runner/work/react-springboot-app/react-springboot-app/frontend
