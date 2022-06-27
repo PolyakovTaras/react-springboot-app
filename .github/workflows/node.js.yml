@@ -28,5 +28,9 @@ jobs:
     - name: Run npm ci
       run: npm ci
       working-directory: /home/runner/work/react-springboot-app/react-springboot-app/frontend
-    - run: npm run build --if-present
-    - run: npm test
+    - name: Run npm build
+      run: npm run build --if-present
+      working-directory: /home/runner/work/react-springboot-app/react-springboot-app/frontend
+    - name: Run npm test
+      working-directory: /home/runner/work/react-springboot-app/react-springboot-app/frontend
+      run: npm test
