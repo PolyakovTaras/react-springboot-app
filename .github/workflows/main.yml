@@ -4,7 +4,7 @@ on:
     branches: [master]
 
 jobs:
-  job_one:
+  build:
     name: Deploy
     runs-on: ubuntu-latest
     - name: Test SSH connection
