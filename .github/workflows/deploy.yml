@@ -1,16 +1,35 @@
 name: Deployment workflow
-on: [push]
+on:
+  push:
+    branches: [ "main" ]
 
 jobs:
   build:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: Test SSH connection
+    
+    - uses: actions/checkout@v3
+    - name: Build the frontend Docker image
+      working-directory: ./frontend
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      
+    - uses: actions/checkout@v3
+    - name: Build the backend Docker image
+      working-directory: ./backend
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      
+    - name: Copy to server and run
       uses: appleboy/ssh-action@master
       with:
         host: 51.250.87.15
         username: yc-user
         key: ${{ secrets.MY_SECRET }}
         port: 22
-        script: whoami
+        script: |
+          cd /home/yc-user/DevOps
+          git pull origin main
+          git status
+          docker-compose stop
+          docker-compose -f docker-compose.yaml up --build
+        
